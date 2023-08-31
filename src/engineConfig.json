@@ -1,0 +1,6 @@
+{
+    "compile": {
+        "data": "pangine/data",
+        "classes": "pangine/classes"
+    }
+}
