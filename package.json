@@ -1,0 +1,25 @@
+{
+    "name": "pangine",
+    "version": "1.0.0",
+    "author": "paigeroid",
+    "description": "A Discord game engine plugin for WillClient",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/paigeroid/pangine.git"
+    },
+    "bugs": {
+        "url": "https://github.com/nuttmegg/pangine/issues"
+    },
+    "license": {
+        "type": "MIT",
+        "url": "https://github.com/paigeroid/pangine/blob/main/LICENSE"
+    },
+    "dependencies": {
+        "discord.js": "latest",
+        "@discordjs/voice": "latest",
+        "willclient": "latest",
+        "node-fetch": "latest",
+        "stews": "latest"
+    },
+    "main": "index.js"
+}
