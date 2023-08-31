@@ -1,6 +1,0 @@
-{
-    "compile": {
-        "classes": "src/plugins/Pengine/",
-        "data": "src/plugins/Pengine"
-    }
-}
