@@ -35,21 +35,21 @@ class Pangine {
 
 
 // Function Maker
-class WCFunctionMaker {
+class PangineFunctionMaker {
     constructor(name, func) {
         var stuff = (func instanceof Function) ? func : function() { return func; }
 
         Object.defineProperty(stuff, "name", { value: name });
-        Object.defineProperty( WillClient.prototype, name, { value: stuff });
+        Object.defineProperty( Pangine.prototype, name, { value: stuff });
 
         return stuff;
     }
 }
 
 
-Object.defineProperties(WillClient, {
-    "Function": { value: WCFunctionMaker }, "function": { value: WCFunctionMaker },
-    "Func": { value: WCFunctionMaker }, "func": { value: WCFunctionMaker}
+Object.defineProperties(Pangine, {
+    "Function": { value: PangineFunctionMaker }, "function": { value: PangineFunctionMaker },
+    "Func": { value: PangineFunctionMaker }, "func": { value: PangineFunctionMaker}
 });
 
 
