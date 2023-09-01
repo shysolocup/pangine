@@ -1,7 +1,6 @@
 var { wc, bot } = require('../../../index.js');
 
 
-const engineConfig = require('./engineConfig.json');
 const { Soup, Stew, Noodle } = require('stews');
 const fs = require('fs');
 
@@ -9,10 +8,17 @@ const fs = require('fs');
 
 class Pangine {
     constructor() {
-        let compiles = Soup.from(engineConfig.compile);
+
+		var config = new Soup({
+			"data": require('./data'),
+        	"classes": require('./classes')
+		});
+
+		
+        let compiles = Soup.from(config);
         compiles = compiles.map( (call, dir) => {
 	        return wc.compile(dir, [], function (path, file, compiled, name) {
-                compiled.push(name, require(`../../../${path}/${file}`)); 
+                compiled.push(name, require(`${path}/${file}`)); 
             });
         });
 		compiles.lobbies = new Soup(Object);
@@ -31,9 +37,9 @@ class Pangine {
 		
 		Object.defineProperty(this, "storage", {
 			get() { return storage.get(this.StorageID); }
-		})
+		});
 
-		return this
+		return this;
     }
 }
 
