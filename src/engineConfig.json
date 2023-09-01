@@ -1,6 +1,0 @@
-{
-    "compile": {
-        "data": "src/plugins/pangine/data",
-        "classes": "src/plugins/pangine/classes"
-    }
-}
