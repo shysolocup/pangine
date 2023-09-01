@@ -22,6 +22,11 @@ class Event {
             v(...arguments);
         });
     }
+
+
+	listen(func) {
+		this.data.push(func);
+	}
 }
 
 module.exports = Event;
