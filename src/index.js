@@ -3,6 +3,7 @@ var { wc, bot } = require('../../../index.js');
 
 const { Soup, Stew, Noodle } = require('stews');
 const fs = require('fs');
+const { setFlagsFromString } = require('v8');
 
 
 
@@ -29,10 +30,20 @@ class Pangine {
 
         this.StorageID = new ID()();
         storage.push(this.StorageID, compiles);
+
+        this.events = new Soup({
+            "createLobby": new Event()
+        });
+
+        var self = this;
 		
-		this.Lobby = Lobby;
-		this.Event = Event;
-		this.Player = Player;
+		this.Lobby = class {
+            constructor(ctx) {
+                self.events.createLobby.fire(ctx);
+                return new Lobby(self, ctx);
+            }
+        };
+		this.Event = Event
 
 		
 		Object.defineProperty(this, "storage", {
