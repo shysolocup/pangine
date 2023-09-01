@@ -9,7 +9,7 @@ class ID {
 			id.push(random.choice(chars));
 		}
 
-        return id;
+        return () => { return id.join("") };
     }
 }
 
