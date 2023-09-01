@@ -1,5 +1,7 @@
 var { ws } = require('../../../../index.js');
-const { CoolError } = require('./CoolError.js')
+
+const CoolError = require('./CoolError.js');
+const Event = require('./Event.js');
 const { Soup } = require('stews');
 
 
@@ -7,33 +9,32 @@ class Lobby {
     constructor(ctx=null) {
         if (!ctx) ctx = ws.ctx;
 
-        this.players = new Soup(Object)
+        this.players = new Soup(Object);
+		this.context = ctx;
 
         this.events = new Soup({
-            join: new Soup(Array),
-            leave: new Soup(Array)
+            join: new Event(),
+            leave: new Event()
         });
-
-        return this;
     }
 
     addPlayer(user) {
         if (!this.players.has(user.id)) {
             this.players.push(user.id, {});
-
-            this.events
+            this.events.join.fire(user)
         }
     }
 
     removePlayer(user) {
         if (this.players.has(user.id)) {
             this.players.delete(user.id);
+			this.events.leave.fire(user)
         }
     }
 
     on(event, func) {
         if (!this.events.has(event)) this.events.push(event, new Soup(Array));
-        this.events[event].push(func);
+        this.events[event].listen(func)
     }
 }
 
