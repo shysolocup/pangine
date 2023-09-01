@@ -3,32 +3,47 @@ var { ws } = require('../../../../index.js');
 const CoolError = require('./CoolError.js');
 const Event = require('./Event.js');
 const { Soup } = require('stews');
+const Player = require('./Player.js');
 
 
 class Lobby {
-    constructor(self, ctx=null) {
+    constructor(parent, ctx=null) {
         if (!ctx) ctx = ws.ctx;
 
+        this.parent = parent
         this.players = new Soup(Object);
 		this.context = ctx;
 
         this.events = new Soup({
             join: new Event(),
-            leave: new Event()
+            leave: new Event(),
+            createPlayer: new Event()
         });
+
+        var self = this;
+
+        this.Player = class {
+            constructor(user) {
+                return new Player()
+            }
+        }
     }
 
     addPlayer(user) {
         if (!this.players.has(user.id)) {
-            this.players.push(user.id, {});
-            this.events.join.fire(user)
+            let player = new this.Player(user);
+
+            this.players.push(user.id, player);
+            this.events.join.fire(user, player)
         }
     }
 
     removePlayer(user) {
         if (this.players.has(user.id)) {
+            let player = this.players.get(user.id);
+
             this.players.delete(user.id);
-			this.events.leave.fire(user)
+			this.events.leave.fire(user, player)
         }
     }
 
