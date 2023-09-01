@@ -6,7 +6,7 @@ const { Soup } = require('stews');
 
 
 class Lobby {
-    constructor(ctx=null) {
+    constructor(self, ctx=null) {
         if (!ctx) ctx = ws.ctx;
 
         this.players = new Soup(Object);
