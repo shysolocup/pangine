@@ -3,24 +3,38 @@ const { Soup } = require('stews');
 
 
 class Player {
-    constructor(user) {
-        let info = new Soup({
+    constructor(parent, user) {
+        this.parent = parent
+
+        const { Event } = this.parent.parent;
+
+        this.events = new Soup({
+            "newValue": new Event(),
+            "updateValue": new Event()
+        });
+
+        this.info = new Soup({
             id: user.id,
             values: new Soup(Object),
             state: "initial",
         });
 
-        info.Value = new Proxy( class {
-            constructor(name, content) {
-                info.values.push(name, { name: name, content: content })
+        var self = this;
 
-                return info.values[name]
-            }
-        }, {
-            set(target, prop, value) {
+
+        this.Value = new Proxy(class {
+            constructor(name, content) {
+                self.info.values.push(name, { name: name, content: content })
+                self.events.newValue.fire(self.info.values[name]);
                 
-            }
-        })
+                return self.info.values[name];
+            }, {
+
+            })
+        }
+
+
+        return this;
     }
 }
 
