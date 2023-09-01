@@ -3,7 +3,6 @@ var { wc, bot } = require('../../../index.js');
 
 const { Soup, Stew, Noodle } = require('stews');
 const fs = require('fs');
-const { setFlagsFromString } = require('v8');
 
 
 
@@ -51,6 +50,12 @@ class Pangine {
 		});
 
 		return this;
+    }
+
+
+    on(event, func) {
+        if (!this.events.has(event)) this.events.push(event, new Soup(Array));
+        this.events[event].listen(func)
     }
 }
 
