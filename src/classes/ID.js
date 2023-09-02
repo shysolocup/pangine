@@ -1,11 +1,11 @@
 const { random } = require('stews');
 
 class ID {
-    constructor() {
+    constructor(chars) {
         let id = [];
 		let chars = "abcdefghijklmnopqrstuvwxyz1234567890".split("");
 
-		for (let i = 0; i < 4; i++) {
+		for (let i = 0; i < chars; i++) {
 			id.push(random.choice(chars));
 		}
 
