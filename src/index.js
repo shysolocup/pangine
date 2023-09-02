@@ -7,7 +7,10 @@ const fs = require('fs');
 
 
 class Pangine {
-    constructor() {
+    constructor(name) {
+
+		this.name = name;
+		this.parent = wc
 
 		var config = new Soup({
 			"data": require('./data'),
@@ -23,18 +26,22 @@ class Pangine {
         });
 		compiles.lobbies = new Soup(Object);
 
+		
         var { classes, data } = compiles;
         var { storage } = data;
         var { ID, Lobby, Player, Event } = classes;
 
-        this.StorageID = new ID()();
+
+        this.StorageID = new ID(9)();
         storage.push(this.StorageID, compiles);
 
+		
         this.events = new Soup({
             "createLobby": new Event()
         });
 
-        var self = this;
+        
+		var self = this;
 		
 		this.Lobby = class {
             constructor(ctx) {
@@ -49,6 +56,9 @@ class Pangine {
 			get() { return storage.get(this.StorageID); }
 		});
 
+
+		if (!wc.Instances) wc.Instances = new Soup(Object);
+		wc.Instances.push(name, this);
 		return this;
     }
 
