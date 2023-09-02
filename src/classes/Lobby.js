@@ -4,6 +4,7 @@ const CoolError = require('./CoolError.js');
 const Event = require('./Event.js');
 const { Soup } = require('stews');
 const Player = require('./Player.js');
+const ID = require('./ID.js');
 
 
 class Lobby {
@@ -12,7 +13,8 @@ class Lobby {
 
         this.parent = parent
         this.players = new Soup(Object);
-		this.context = ctx;
+		this.id = new ID(4);
+		this.ctx = ctx;
 
         this.events = new Soup({
             join: new Event(),
