@@ -24,9 +24,11 @@ class Lobby {
 
         this.Player = class {
             constructor(user) {
-                return new Player()
+                return new Player(self, user)
             }
         }
+
+		return this
     }
 
     addPlayer(user) {
