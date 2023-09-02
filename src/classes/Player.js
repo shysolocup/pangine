@@ -13,6 +13,7 @@ class Player {
             "updateValue": new Event()
         });
 
+		
         this.info = new Soup({
             id: user.id,
             values: new Soup(Object),
@@ -28,11 +29,14 @@ class Player {
                 self.events.newValue.fire(self.info.values[name]);
                 
                 return self.info.values[name];
-            }, {
-
-            })
-        }
-
+        	}
+		}, {
+			set(target, prop, value) {
+				self.events.updateValue.fire(self.info.values[target]);
+				target[prop] = value;
+			}
+		});
+		
 
         return this;
     }
