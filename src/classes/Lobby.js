@@ -1,59 +1,99 @@
 var { ws } = require('../../../../index.js');
 
-const CoolError = require('./CoolError.js');
-const Event = require('./Event.js');
 const { Soup } = require('stews');
 const Player = require('./Player.js');
 const ID = require('./ID.js');
 
 
 class Lobby {
-    constructor(parent, ctx=null) {
+    constructor(parent, ctx=null, settings={ playerValues:{}, values:{}, idLength:4 }) {
+
+		if (!settings.playerValues) settings.playerValues = {};
+		if (!settings.values) settings.values = {};
+		if (!settings.idLength) settings.idLength = 4;
         if (!ctx) ctx = ws.ctx;
 
+		
         this.parent = parent
         this.players = new Soup(Object);
-		this.id = new ID(4)();
+		this.playerValues = Soup.from(settings.playerValues);
+		this.id = new ID(settings.idLength)();
+		this.values = new Soup(Object);
 		this.ctx = ctx;
 
-        this.events = new Soup({
-            join: new Event(),
-            leave: new Event(),
-            createPlayer: new Event()
-        });
+		this.home = null;
 
         var self = this;
 
-        this.Player = class {
+		
+        this.Player = new Proxy(class {
             constructor(user) {
-                return new Player(self, user)
-            }
-        }
+                let player = new Player(self, ...Array.from(arguments));
+				self.players.push(user.id, player);
+				parent.events.playerJoin.fire(player, self);
+				return player;
+			}
+		}, {
+			set(target, prop, value) {
+				parent.events.updatePlayer.fire(prop, self);
+				target[prop] = value;
+			}
+		});
 
-		return this
-    }
+		
+		this.Value = new Proxy(class {
+            constructor(name, content) {
+                self.values.push(name, content)
+                parent.events.createLobbyValue.fire(self.values[name]);
+                
+                return self.values[name];
+        	}
+		}, {
+			set(target, prop, value) {
+				parent.events.updateLobbyValue.fire(prop, target);
+				target[prop] = value;
+			}
+		});
 
-    addPlayer(user) {
-        if (!this.players.has(user.id)) {
-            let player = new this.Player(user);
+		
+		this.PlayerValue = new Proxy(class {
+            constructor(name, content) {
+                self.playerValues.push(name, content)
+                parent.events.createMultiPlayerValue.fire(self.PlayerValues[name]);
 
-            this.players.push(user.id, player);
-            this.events.join.fire(user, player)
-        }
-    }
+				self.players.forEach( (k, v) => {
+					if (!v.values.has(name)) v.push(name, content);
+				});
+                
+                return self.playerValues[name];
+        	}
+		}, {
+			set(target, prop, value) {
+				parent.events.updateMultiPlayerValue.fire(prop, target);
+				target[prop] = value;
+			}
+		});
 
-    removePlayer(user) {
-        if (this.players.has(user.id)) {
-            let player = this.players.get(user.id);
+		let host = (ctx.author) ? ctx.author : ctx.user;
+		this.host = new this.Player(host);
 
-            this.players.delete(user.id);
-			this.events.leave.fire(user, player)
-        }
-    }
+		
+		return new Proxy(this, {
+			get(target, prop) {
+				if (target.values.has(prop)) return target.values.get(prop);
+				else return target[prop];
+			},
 
-    on(event, func) {
-        if (!this.events.has(event)) this.events.push(event, new Soup(Array));
-        this.events[event].listen(func)
+			set(target, prop, value) {
+				if (target.values.has(prop)) return target.values.set(prop, value);
+				else return target[prop] = value;
+			},
+
+			delete(target, prop) {
+				if (target.values.has(prop)) return target.values.delete(prop);
+				else return delete target[prop];
+			}
+		});
     }
 }
 
