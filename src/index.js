@@ -29,44 +29,72 @@ class Pangine {
 		
         var { classes, data } = compiles;
         var { storage } = data;
-        var { ID, Lobby, Player, Event } = classes;
+        var { ID, Lobby, Event } = classes;
 
 
         this.StorageID = new ID(9)();
         storage.push(this.StorageID, compiles);
+				
+		Object.defineProperty(this, "storage", {
+			get() { return storage.get(this.StorageID); }
+		});
+
+		Object.defineProperty(this, "lobbies", {
+			get() { return this.storage.lobbies; }
+		});
 
 		
         this.events = new Soup({
-            "createLobby": new Event()
+
+			createLobby: new Event(),
+			updateLobby: new Event(),
+
+			playerJoin: new Event(),
+			playerLeave: new Event(),
+			updatePlayer: new Event(),
+
+			createSinglePlayerValue: new Event(),
+			updateSinglePlayerValue: new Event(),
+
+			createMuliPlayerValue: new Event(),
+			updateMuliPlayerValue: new Event(),
+
+			createLobbyValue: new Event(),
+			updateLobbyValue: new Event(),
         });
 
         
 		var self = this;
 		
-		this.Lobby = class {
-            constructor(ctx) {
-                self.events.createLobby.fire(ctx);
-                return new Lobby(self, ctx);
+		this.Lobby = new Proxy(class {
+            constructor() {
+				let lobby = new Lobby(self, ...Array.from(arguments));
+                self.events.createLobby.fire(lobby);
+				self.storage.lobbies.push(lobby.id, lobby);
+                return lobby;
             }
-        };
+        }, {
+			set(target, prop, value) {
+				self.events.updateLobby.fire(prop, target);
+				target[prop] = value;
+			}	
+		});
+		
 		this.Event = Event
 
-		
-		Object.defineProperty(this, "storage", {
-			get() { return storage.get(this.StorageID); }
-		});
 
-
-		if (!wc.Instances) wc.Instances = new Soup(Object);
-		wc.Instances.push(name, this);
+		if (!wc.pangine.Instances) wc.pangine.Instances = new Soup(Object);
+		wc.pangine.Instances.push(name, this);
 		return this;
     }
 
 
     on(event, func) {
-        if (!this.events.has(event)) this.events.push(event, new Soup(Array));
+        if (!this.events.has(event)) this.events.push(event, new this.storage.classes.Event());
         this.events[event].listen(func)
     }
+
+	event(event, func) { return this.event(event, func); }
 }
 
 
@@ -115,4 +143,4 @@ Object.defineProperties(Pangine, {
 
 
 
-module.exports = { Pangine }
+module.exports = { Pangine, Instances: new Soup(Object) }
