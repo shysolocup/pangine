@@ -5,41 +5,55 @@ const { Soup } = require('stews');
 class Player {
     constructor(parent, user) {
         this.parent = parent
-
-        const { Event } = this.parent.parent;
-
-        this.events = new Soup({
-            "newValue": new Event(),
-            "updateValue": new Event()
-        });
-
 		
-        this.info = new Soup({
-            id: user.id,
-            values: new Soup(Object),
-            state: "initial",
-        });
+        this.user = user
+        this.values = new Soup(Object);
+        this.state = this.parent.defaultState;
 
         var self = this;
 
 
         this.Value = new Proxy(class {
             constructor(name, content) {
-                self.info.values.push(name, { name: name, content: content })
-                self.events.newValue.fire(self.info.values[name]);
+                self.values.push(name, content)
+                parent.parent.events.createSinglePlayerValue.fire(self.values[name]);
                 
-                return self.info.values[name];
+                return self.values[name];
         	}
 		}, {
 			set(target, prop, value) {
-				self.events.updateValue.fire(self.info.values[target]);
+				parent.parent.events.updateSinglePlayerValue.fire(prop, target);
 				target[prop] = value;
 			}
 		});
 		
+		this.parent.playerValues.forEach( (k, v) => {
+			new this.Value(k, v);
+		});
+		
 
-        return this;
+        return new Proxy(this, {
+			get(target, prop) {
+				if (target.values.has(prop)) return target.values.get(prop);
+				else return target[prop];
+			},
+
+			set(target, prop, value) {
+				if (target.values.has(prop)) return target.values.set(prop, value);
+				else return target[prop] = value;
+			},
+
+			delete(target, prop) {
+				if (target.values.has(prop)) return target.values.delete(prop);
+				else return delete target[prop];
+			}
+		});
     }
+
+	leave() {
+		this.parent.players.delete(this.user.id);
+		this.parent.parent.events.playerLeave.fire(this, this.parent);
+	}
 }
 
 
