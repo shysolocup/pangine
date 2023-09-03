@@ -18,8 +18,9 @@ class Event {
 
 
     fire(/**/) {
+		let args = Array.from(arguments);
         this.data.forEach( (v) => {
-            v(...arguments);
+            v(...args);
         });
     }
 
