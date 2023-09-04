@@ -70,6 +70,7 @@ class Pangine {
 			catchSignal: new Event(),
 
 			createEvent: new Event()
+		
         });
 
         
