@@ -2,6 +2,7 @@ var { ws } = require('../../../../index.js');
 
 const { Soup } = require('stews');
 const Player = require('./Player.js');
+const CoolError = require('./CoolError.js');
 const ID = require('./ID.js');
 
 
@@ -18,17 +19,33 @@ class Lobby {
         this.players = new Soup(Object);
 		this.playerValues = Soup.from(settings.playerValues);
 		this.id = new ID(settings.idLength)();
-		this.values = new Soup(Object);
+		this.values = new Soup(settings.values);
 		this.ctx = ctx;
-
 		this.home = null;
 
+		
         var self = this;
+
+		
+		var locked = false
+		Object.defineProperty(this, "locked", {
+			get() { 
+				return locked
+			},
+			set(to) {
+				if (to == true) parent.events.lockLobby.fire(self);
+				else if (to == false) parent.events.unlockLobby.fire(self);
+				
+				locked = to;
+			}
+		});
 
 		
         this.Player = new Proxy(class {
             constructor(user) {
-                let player = new Player(self, ...Array.from(arguments));
+				if (self.locked) throw new CoolError("Lobby Locked", "Player attempted to join a locked lobby.");
+                
+				let player = new Player(self, ...Array.from(arguments));
 				self.players.push(user.id, player);
 				parent.events.playerJoin.fire(player, self);
 				return player;
@@ -74,6 +91,27 @@ class Lobby {
 			}
 		});
 
+
+		this.Signal = class {
+			constructor(name) {
+				this.name = name
+				parent.events.createSignal.fire(this);
+			}
+
+			throw() {
+				parent.signals.push(this.name, Array.from(arguments));
+				parent.events.throwSignal.fire(this);
+			}
+
+			catch() {
+				let content = parent.signals.get(this.name);
+				parent.events.catchSignal.fire(this, content);
+				parent.signals.delete(this.name);
+				return content;
+			}
+		}
+
+		
 		let host = (ctx.author) ? ctx.author : ctx.user;
 		this.host = new this.Player(host);
 
@@ -95,6 +133,21 @@ class Lobby {
 			}
 		});
     }
+
+	close() {
+		this.parent.lobbies.delete(this.id);
+	}
+
+	
+	lock() {
+		this.lock = true;
+	}
+
+		
+	unlock() {
+		this.lock = false;
+	}
+	
 }
 
 
