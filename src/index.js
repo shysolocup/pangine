@@ -48,6 +48,9 @@ class Pangine {
 
 			createLobby: new Event(),
 			updateLobby: new Event(),
+			closeLobby: new Event(),
+			lockLobby: new Event(),
+			unlockLobby: new Event(),
 
 			playerJoin: new Event(),
 			playerLeave: new Event(),
@@ -61,6 +64,12 @@ class Pangine {
 
 			createLobbyValue: new Event(),
 			updateLobbyValue: new Event(),
+
+			createSignal: new Event(),
+			throwSignal: new Event(),
+			catchSignal: new Event(),
+
+			createEvent: new Event()
         });
 
         
@@ -80,13 +89,36 @@ class Pangine {
 			}	
 		});
 		
-		this.Event = Event
+		this.Event = class { 
+			constructor(name) {
+				let event = new Event();
+				self.events.createEvent.fire(name, event);
+				self.events.push(name, event);
+			}
+		};
 
 
 		if (!wc.pangine.Instances) wc.pangine.Instances = new Soup(Object);
 		wc.pangine.Instances.push(name, this);
+		this.signals = new Soup(Object);
+		
 		return this;
     }
+
+	
+	close(lobbyID) {
+		this.lobbies.delete(lobbyID);
+	}
+
+	
+	lock(lobbyID) {
+		this.lobbies[lobbyID].lock = true;
+	}
+
+	
+	unlock(lobbyID) {
+		this.lobbies[lobbyID].lock = false;
+	}
 
 
     on(event, func) {
@@ -95,6 +127,7 @@ class Pangine {
     }
 
 	event(event, func) { return this.event(event, func); }
+	
 }
 
 
