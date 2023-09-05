@@ -13,7 +13,7 @@ class Player {
         var self = this;
 
 
-        this.Value = new Proxy(class {
+        this.Value = new Proxy( class Value {
             constructor(name, content) {
                 self.values.push(name, content)
                 parent.parent.events.createSinglePlayerValue.fire(self.values[name]);
