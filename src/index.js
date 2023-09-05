@@ -79,22 +79,22 @@ class Pangine {
 		this.Lobby = new Proxy( class Lobby {
             constructor() {
 				let lobby = new Lobby(self, ...Array.from(arguments));
-                self.events.createLobby.fire(lobby);
 				self.storage.lobbies.push(lobby.id, lobby);
+                self.events.createLobby.fire(lobby);
                 return lobby;
             }
         }, {
 			set(target, prop, value) {
-				self.events.updateLobby.fire(prop, target);
 				target[prop] = value;
+				self.events.updateLobby.fire(prop, target);
 			}	
 		});
 		
 		this.Event = class Event { 
 			constructor(name) {
 				let event = new Event();
-				self.events.createEvent.fire(name, event);
 				self.events.push(name, event);
+				self.events.createEvent.fire(name, event);
 			}
 		};
 
