@@ -4,10 +4,10 @@ Pangine is a Discord.JS multiplayer minigame framework using WillClient and Stew
 - Values & script signals
 - Events
 
-<br>
+<br><br>
 
 
-## Lobby & Player Management
+### Lobby & Player Management
 Using Pangine in this command it creates a new lobby and sends an embed that says how many players are in the lobby
 ```js
 // src/commands/create.js
@@ -108,7 +108,7 @@ wc.slashCommand({ name: "leave", desc: "leaves a lobby" options: options }, asyn
 
 <br>
 
-## Values
+### Values
 This example creates a new lobby with the default player value for score as 0 and a lobby value for day also as 0.<br><br>
 
 player values are values that are added to a player every time that a player is added to the lobby. <br>
@@ -151,7 +151,7 @@ new player.Value("name", content); // values in a single player that can be call
 
 <br>
 
-## Events
+### Events
 This event is called once a player joins a lobby
 ```js
 // src/events/join.js
@@ -166,7 +166,7 @@ inst.on("playerJoin", (player, lobby) => {
 
 <br>
 
-## Script Signals
+### Script Signals
 Script signals are signals that can be thrown and caught between different places. Once a signal is caught it'll delete from storage.
 ```js
 // src/commands/throw.js
@@ -201,7 +201,7 @@ wc.slashCommand({ name: "throw",  desc: "throws a new script signal", options: o
 	wc.buttonAction(`throw:${lobby.id}`, (ctx) => { signal.throw(ctx, lobby) });
 });
 ```
-This event catches that signal when it's thrown;
+This event catches that signal when it's thrown and responds to it;
 ```js
 // src/events/catch.js
 
