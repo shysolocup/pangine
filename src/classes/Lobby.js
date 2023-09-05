@@ -61,14 +61,14 @@ class Lobby {
 		this.Value = new Proxy( class Value {
             constructor(name, content) {
                 self.values.push(name, content)
-                parent.events.createLobbyValue.fire(self.values[name]);
+                parent.events.createLobbyValue.fire(self.values[name], self);
                 
                 return self.values[name];
         	}
 		}, {
 			set(target, prop, value) {
 				target[prop] = value;
-				parent.events.updateLobbyValue.fire(prop, target);
+				parent.events.updateLobbyValue.fire(prop, target, self);
 			}
 		});
 
@@ -81,14 +81,14 @@ class Lobby {
 					if (!v.values.has(name)) v.push(name, content);
 				});
 				
-                parent.events.createMultiPlayerValue.fire(self.PlayerValues[name]);
+                parent.events.createMultiPlayerValue.fire(self.PlayerValues[name], self);
                 
                 return self.playerValues[name];
         	}
 		}, {
 			set(target, prop, value) {
 				target[prop] = value;
-				parent.events.updateMultiPlayerValue.fire(prop, target);
+				parent.events.updateMultiPlayerValue.fire(prop, target, self);
 			}
 		});
 
@@ -96,17 +96,17 @@ class Lobby {
 		this.Signal = class Signal {
 			constructor(name) {
 				this.name = name
-				parent.events.createSignal.fire(this);
+				parent.events.createSignal.fire(this, lobby);
 			}
 
 			throw() {
 				parent.signals.push(this.name, Array.from(arguments));
-				parent.events.throwSignal.fire(this);
+				parent.events.throwSignal.fire(this, lobby);
 			}
 
 			catch() {
 				let content = parent.signals.get(this.name);
-				parent.events.catchSignal.fire(this, content);
+				parent.events.catchSignal.fire(this, content, lobby);
 				parent.signals.delete(this.name);
 				return content;
 			}
