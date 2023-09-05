@@ -1,4 +1,10 @@
 # Pangine
+<a href="https://www.npmjs.com/package/pangine"><img src="https://img.shields.io/npm/v/pangine?style=flat&color=red&logo=npm&logoColor=white" alt="version" />
+<a href="https://www.npmjs.com/package/pangine"><img src="https://img.shields.io/npm/dt/pangine?style=flat&color=green&logo=docusign&logoColor=white" alt="downloads" />
+<a href="https://npmjs.com/package/willclient"><img src="https://img.shields.io/badge/willclient-v1.0.0-blue?style=flat&color=blue&logo=discord&logoColor=white" alt="willclient"></a>
+<a href="https://npmjs.com/package/stews"><img src="https://custom-icon-badges.demolab.com/badge/Stews-v1.7.1-orange.svg?logo=stew&logoColor=white" alt="stews"></a>
+<img src="https://github.com/paigeroid/pangine/actions/workflows/publish-shit.yml/badge.svg" alt="publish">
+		
 Pangine is a Discord.JS multiplayer minigame framework using WillClient and Stews that includes built in:
 - Lobby & player management
 - Values & script signals
