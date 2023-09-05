@@ -7,9 +7,9 @@ const ID = require('./ID.js');
 
 
 class Lobby {
-    constructor(parent, ctx=null, settings={ playerValues:{}, values:{}, idLength:4 }) {
+    constructor(parent, ctx=null, settings={ starterPlayerValues:{}, values:{}, idLength:4 }) {
 
-		if (!settings.playerValues) settings.playerValues = {};
+		if (!settings.starterPlayerValues) settings.starterPlayerValues = {};
 		if (!settings.values) settings.values = {};
 		if (!settings.idLength) settings.idLength = 4;
         if (!ctx) ctx = ws.ctx;
@@ -17,7 +17,7 @@ class Lobby {
 		
         this.parent = parent
         this.players = new Soup(Object);
-		this.playerValues = Soup.from(settings.playerValues);
+		this.starterPlayerValues = Soup.from(settings.starterPlayerValues);
 		this.id = new ID(settings.idLength)();
 		this.values = new Soup(settings.values);
 		this.ctx = ctx;
@@ -73,22 +73,22 @@ class Lobby {
 		});
 
 		
-		this.PlayerValue = new Proxy( class PlayerValue {
+		this.StarterPlayerValue = new Proxy( class PlayerValue {
             constructor(name, content) {
-                self.playerValues.push(name, content)
+                self.starterPlayerValues.push(name, content)
 
 				self.players.forEach( (k, v) => {
 					if (!v.values.has(name)) v.push(name, content);
 				});
 				
-                parent.events.createMultiPlayerValue.fire(self.PlayerValues[name], self);
+                parent.events.createStarterPlayerValue.fire(self.starterPlayerValues[name], self);
                 
-                return self.playerValues[name];
+                return self.starterPlayerValues[name];
         	}
 		}, {
 			set(target, prop, value) {
 				target[prop] = value;
-				parent.events.updateMultiPlayerValue.fire(prop, target, self);
+				parent.events.updateStarterPlayerValue.fire(prop, target, self);
 			}
 		});
 
