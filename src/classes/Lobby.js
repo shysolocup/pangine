@@ -53,7 +53,7 @@ class Lobby {
 		}, {
 			set(target, prop, value) {
 				target[prop] = value;
-				parent.events.updatePlayer.fire(prop, self);
+				parent.events.updatePlayer.fire(prop, target, self);
 			}
 		});
 
