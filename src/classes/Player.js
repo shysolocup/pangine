@@ -8,7 +8,6 @@ class Player {
 		
         this.user = user
         this.values = new Soup(Object);
-        this.state = this.parent.defaultState;
 
         var self = this;
 
@@ -16,18 +15,18 @@ class Player {
         this.Value = new Proxy( class Value {
             constructor(name, content) {
                 self.values.push(name, content)
-                parent.parent.events.createSinglePlayerValue.fire(self.values[name]);
+                parent.parent.events.createPlayerValue.fire(self.values[name]);
                 
                 return self.values[name];
         	}
 		}, {
 			set(target, prop, value) {
 				target[prop] = value;
-				parent.parent.events.updateSinglePlayerValue.fire(prop, target);
+				parent.parent.events.updatePlayerValue.fire(prop, target);
 			}
 		});
 		
-		this.parent.playerValues.forEach( (k, v) => {
+		this.parent.starterPlayerValues.forEach( (k, v) => {
 			new this.Value(k, v);
 		});
 		
