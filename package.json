@@ -21,5 +21,5 @@
         "node-fetch": "latest",
         "stews": "latest"
     },
-    "main": "index.js"
+    "main": "src/index.js"
 }
