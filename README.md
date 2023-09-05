@@ -34,6 +34,7 @@ new inst.Lobby.Function("refresh", function() {
 });
 
 
+// command that creates the lobby
 wc.slashCommand("create", "creates a new lobby", async (ctx, cmd) => {
 	let lobby = new inst.Lobby(ctx);
 
