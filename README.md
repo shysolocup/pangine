@@ -110,4 +110,43 @@ wc.slashCommand({ name: "leave", desc: "leaves a lobby" options: options }, asyn
 
 <br>
 
+# Values
+This example creates a new lobby with the default player value for score as 0 and a lobby value for day also as 0.<br><br>
 
+player values are values that are added to a player every time that a player is added to the lobby. <br>
+lobby values are values that are values that are inside of the lobby
+```js
+let lobby = new inst.Lobby(ctx, {
+	playerValues: { // values that get created everytime a player is added to the lobby
+		score: 0
+	},
+
+	values: { // values for the lobby
+		day: 0
+	}
+});
+
+console.log(lobby.day); // 0
+
+lobby.day += 1;
+
+console.log(lobby.day); // 1
+
+lobby.players.forEach( (id, player) => {
+	console.log(player.score); // 0
+	console.log(player.values.score); // 0
+
+	player.score += 1;
+
+	console.log(player.score); // 1
+});
+```
+You can also create values like this:
+```js
+
+new lobby.Value("name", content); // values in the lobby that can be called using lobby.name
+
+new lobby.PlayerValue("name", content); // new player value added to every new player that joins and can be called using player.name
+
+new player.Value("name", content); // values in a single player that can be called using player.name
+```
