@@ -7,7 +7,9 @@ Pangine is a Discord.JS multiplayer minigame framework using WillClient and Stew
 
 <br>
 
-## Usage
+
+
+## Lobby & Player Management
 Using Pangine in this command it creates a new lobby and sends an embed that says how many players are in the lobby
 ```js
 // src/commands/create.js
@@ -105,3 +107,7 @@ wc.slashCommand({ name: "leave", desc: "leaves a lobby" options: options }, asyn
 	lobby.home.edit({ embeds: [embed] });
 });
 ```
+
+<br>
+
+
