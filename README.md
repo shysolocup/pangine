@@ -20,7 +20,7 @@ var { inst } = wc.pangine.Instances;
 new inst.Lobby.Function("refresh", function() {
 	return new wc.Embed({
 		title: "Untilted Game",
-		description: `Use the command '\`/join ${this.id}' to join in the game`,
+		description: `Use the command '\`/join ${this.id}\`' to join in the game`,
 
 		fields: [
 			{ name: "** **", value: "** **" },
