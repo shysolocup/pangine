@@ -33,15 +33,14 @@ class Lobby {
 				return locked
 			},
 			set(to) {
+				locked = to;
 				if (to == true) parent.events.lockLobby.fire(self);
 				else if (to == false) parent.events.unlockLobby.fire(self);
-				
-				locked = to;
 			}
 		});
 
 		
-        this.Player = new Proxy(class {
+        this.Player = new Proxy(class Player {
             constructor(user) {
 				if (self.locked) throw new CoolError("Lobby Locked", "Player attempted to join a locked lobby.");
                 
@@ -52,13 +51,13 @@ class Lobby {
 			}
 		}, {
 			set(target, prop, value) {
-				parent.events.updatePlayer.fire(prop, self);
 				target[prop] = value;
+				parent.events.updatePlayer.fire(prop, self);
 			}
 		});
 
 		
-		this.Value = new Proxy(class {
+		this.Value = new Proxy(class Value {
             constructor(name, content) {
                 self.values.push(name, content)
                 parent.events.createLobbyValue.fire(self.values[name]);
@@ -67,27 +66,28 @@ class Lobby {
         	}
 		}, {
 			set(target, prop, value) {
-				parent.events.updateLobbyValue.fire(prop, target);
 				target[prop] = value;
+				parent.events.updateLobbyValue.fire(prop, target);
 			}
 		});
 
 		
-		this.PlayerValue = new Proxy(class {
+		this.PlayerValue = new Proxy(class PlayerValue{
             constructor(name, content) {
-                self.playerValues.push(name, content)
-                parent.events.createMultiPlayerValue.fire(self.PlayerValues[name]);
+                self.playerValues.push(name, content
 
 				self.players.forEach( (k, v) => {
 					if (!v.values.has(name)) v.push(name, content);
 				});
+				
+                parent.events.createMultiPlayerValue.fire(self.PlayerValues[name]);
                 
                 return self.playerValues[name];
         	}
 		}, {
 			set(target, prop, value) {
-				parent.events.updateMultiPlayerValue.fire(prop, target);
 				target[prop] = value;
+				parent.events.updateMultiPlayerValue.fire(prop, target);
 			}
 		});
 
