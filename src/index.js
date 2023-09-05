@@ -56,11 +56,11 @@ class Pangine {
 			playerLeave: new Event(),
 			updatePlayer: new Event(),
 
-			createSinglePlayerValue: new Event(),
-			updateSinglePlayerValue: new Event(),
+			createPlayerValue: new Event(),
+			updatePlayerValue: new Event(),
 
-			createMuliPlayerValue: new Event(),
-			updateMuliPlayerValue: new Event(),
+			createStarterPlayerValue: new Event(),
+			updateStarterPlayerValue: new Event(),
 
 			createLobbyValue: new Event(),
 			updateLobbyValue: new Event(),
