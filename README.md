@@ -41,12 +41,14 @@ wc.slashCommand("create", "creates a new lobby", async (ctx, cmd) => {
 var { wc } = require('path to index.js');
 var { inst } = wc.pangine.Instances;
 
+
 let options = [{
 	name: "id",
 	description: "lobby id to join",
 	required: true,
 	type: "str"	
 }];
+
 
 wc.slashCommand({ name: "join", desc: "joins a lobby" options: options }, async (ctx, cmd) => {
 	let id = cmd.args[0].value;
@@ -81,12 +83,14 @@ wc.slashCommand({ name: "join", desc: "joins a lobby" options: options }, async 
 var { wc } = require('path to index.js');
 var { inst } = wc.pangine.Instances;
 
+
 let options = [{
 	name: "id",
 	description: "lobby id to leave",
 	required: true,
 	type: "str"
 }];
+
 
 wc.slashCommand({ name: "leave", desc: "leaves a lobby" options: options }, async (ctx, cmd) => {
 	let id = cmd.args[0].value;
