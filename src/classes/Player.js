@@ -22,8 +22,8 @@ class Player {
         	}
 		}, {
 			set(target, prop, value) {
-				parent.parent.events.updateSinglePlayerValue.fire(prop, target);
 				target[prop] = value;
+				parent.parent.events.updateSinglePlayerValue.fire(prop, target);
 			}
 		});
 		
