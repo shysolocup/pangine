@@ -30,13 +30,13 @@ class Lobby {
 		var locked = false
 		Object.defineProperty(this, "locked", {
 			get() { 
-				return locked
+				return locked;
 			},
 			set(to) {
+				locked = to;
+				
 				if (to == true) parent.events.lockLobby.fire(self);
 				else if (to == false) parent.events.unlockLobby.fire(self);
-				
-				locked = to;
 			}
 		});
 
@@ -52,8 +52,8 @@ class Lobby {
 			}
 		}, {
 			set(target, prop, value) {
-				parent.events.updatePlayer.fire(prop, self);
 				target[prop] = value;
+				parent.events.updatePlayer.fire(prop, self);
 			}
 		});
 
@@ -67,8 +67,8 @@ class Lobby {
         	}
 		}, {
 			set(target, prop, value) {
-				parent.events.updateLobbyValue.fire(prop, target);
 				target[prop] = value;
+				parent.events.updateLobbyValue.fire(prop, target);
 			}
 		});
 
@@ -76,18 +76,19 @@ class Lobby {
 		this.PlayerValue = new Proxy( class PlayerValue {
             constructor(name, content) {
                 self.playerValues.push(name, content)
-                parent.events.createMultiPlayerValue.fire(self.PlayerValues[name]);
 
 				self.players.forEach( (k, v) => {
 					if (!v.values.has(name)) v.push(name, content);
 				});
+				
+                parent.events.createMultiPlayerValue.fire(self.PlayerValues[name]);
                 
                 return self.playerValues[name];
         	}
 		}, {
 			set(target, prop, value) {
-				parent.events.updateMultiPlayerValue.fire(prop, target);
 				target[prop] = value;
+				parent.events.updateMultiPlayerValue.fire(prop, target);
 			}
 		});
 
