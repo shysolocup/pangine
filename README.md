@@ -110,7 +110,7 @@ wc.slashCommand({ name: "leave", desc: "leaves a lobby" options: options }, asyn
 
 <br>
 
-# Values
+## Values
 This example creates a new lobby with the default player value for score as 0 and a lobby value for day also as 0.<br><br>
 
 player values are values that are added to a player every time that a player is added to the lobby. <br>
@@ -149,4 +149,70 @@ new lobby.Value("name", content); // values in the lobby that can be called usin
 new lobby.PlayerValue("name", content); // new player value added to every new player that joins and can be called using player.name
 
 new player.Value("name", content); // values in a single player that can be called using player.name
+```
+
+<br>
+
+## Events
+This event is called once a player joins a lobby
+```js
+// src/events/join.js
+
+var { wc } = require('path to index.js');
+var { inst } = wc.pangine.Instances;
+
+inst.on("playerJoin", (player, lobby) => {
+	console.log(`${player.user.username} joined lobby ${lobby.id}`);
+});
+```
+
+<br>
+
+## Script Signals
+Script signals are signals that can be thrown and caught between different places. Once a signal is caught it'll delete from storage.
+```js
+// src/commands/throw.js
+
+var { wc } = require('path to index.js');
+var { inst } = wc.pangine.Instances;
+
+
+let options = [{
+	name: "id",
+	description: "lobby id to leave",
+	required: true,
+	type: "str"
+}];
+
+
+wc.slashCommand({ name: "throw",  desc: "throws a new script signal", options: options }, async (ctx, cmd) => {
+	let id = cmd.args[0].value;
+
+	if (!inst.lobbies.has(id)) return wc.reply("There is no lobby with that ID", { ephemeral: true });
+	let lobby = inst.lobbies.get(id);
+
+	let button = new wc.Button({ id: `throw:${lobby.id}`, label: "Click me to throw lobby ID", style: "primary" });
+	let row = new wc.ActionRow([button]);
+
+	lobby.home = await ctx.reply({ components: [row] });
+
+	// creates a new signal with the name "throw"
+	let signal = new lobby.Signal("throw");
+
+	// whenever the button is pressed it throws the signal
+	wc.buttonAction(`throw:${lobby.id}`, (ctx) => { signal.throw(ctx, lobby) });
+});
+```
+This event catches that signal when it's thrown;
+```js
+// src/events/catch.js
+
+var { wc } = require('path to index.js');
+var { inst } = wc.pangine.Instances;
+
+inst.on("throwSignal", (signal) => {
+	let [ctx, id] = signal.catch(); // catches the signal
+
+	ctx.reply(`I caught lobby ${lobby.id}!`); // responds
+});
 ```
