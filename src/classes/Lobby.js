@@ -29,7 +29,7 @@ class Lobby {
 		
 		var locked = false
 		Object.defineProperty(this, "locked", {
-			get() { 
+			get() {
 				return locked
 			},
 			set(to) {
@@ -52,6 +52,7 @@ class Lobby {
 		}, {
 			set(target, prop, value) {
 				target[prop] = value;
+				
 				parent.events.updatePlayer.fire(prop, self);
 			}
 		});
@@ -67,6 +68,7 @@ class Lobby {
 		}, {
 			set(target, prop, value) {
 				target[prop] = value;
+				
 				parent.events.updateLobbyValue.fire(prop, target);
 			}
 		});
@@ -87,6 +89,7 @@ class Lobby {
 		}, {
 			set(target, prop, value) {
 				target[prop] = value;
+				
 				parent.events.updateMultiPlayerValue.fire(prop, target);
 			}
 		});
@@ -95,6 +98,7 @@ class Lobby {
 		this.Signal = class {
 			constructor(name) {
 				this.name = name
+				
 				parent.events.createSignal.fire(this);
 			}
 
