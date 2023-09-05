@@ -76,7 +76,7 @@ wc.slashCommand({ name: "join", desc: "joins a lobby" options: options }, async 
 ```
 
 ```js
-// src/commands/join.js
+// src/commands/leave.js
 
 var { wc } = require('path to index.js');
 var { inst } = wc.pangine.Instances;
