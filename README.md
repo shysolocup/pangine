@@ -1,5 +1,5 @@
 # Pangine
-Pangine is a Discord.JS minigame framework using WillClient and Stews that includes built in:
+Pangine is a Discord.JS multiplayer minigame framework using WillClient and Stews that includes built in:
 - Lobby & player management
 - Values & script signals
 - Storage management
@@ -8,6 +8,7 @@ Pangine is a Discord.JS minigame framework using WillClient and Stews that inclu
 <br>
 
 ## Usage
+Using Pangine in this command it creates a new lobby and sends an embed that says how many players are in the lobby
 ```js
 // src/commands/create.js
 
@@ -34,7 +35,7 @@ wc.slashCommand("create", "creates a new lobby", async (ctx, cmd) => {
 	lobby.home = await ctx.reply({ embeds: [embed] });
 });
 ```
-
+In this command it lets players join the lobby
 ```js
 // src/commands/join.js
 
@@ -76,7 +77,7 @@ wc.slashCommand({ name: "join", desc: "joins a lobby" options: options }, async 
 	lobby.home.edit({ embeds: [embed] });
 });
 ```
-
+In this command it lets players leave the lobby
 ```js
 // src/commands/leave.js
 
