@@ -1,19 +1,24 @@
+const PangineClassBuilder = require('../builders/PangineClassBuilder.js');
 var { ws } = require('../../../../index.js');
 const { Soup } = require('stews');
 
 
 class Player {
     constructor(parent, user) {
+		this.__proto__ = parent.Player.prototype;
         this.parent = parent
+
 		
         this.user = user
         this.values = new Soup(Object);
 
+		
         var self = this;
 
 
-        this.Value = new Proxy( class Value {
+        this.Value = PangineClassBuilder(new Proxy( class Value {
             constructor(name, content) {
+				this.parent = self;
                 self.values.push(name, content)
                 parent.parent.events.createPlayerValue.fire(self.values[name]);
                 
@@ -24,11 +29,17 @@ class Player {
 				target[prop] = value;
 				parent.parent.events.updatePlayerValue.fire(prop, target);
 			}
-		});
+		}));
 		
 		this.parent.starterPlayerValues.forEach( (k, v) => {
 			new this.Value(k, v);
 		});
+
+
+		this.__proto__.leave = function leave() {
+			this.parent.players.delete(this.user.id);
+			this.parent.parent.events.playerLeave.fire(this, this.parent);
+		}
 		
 
         return new Proxy(this, {
@@ -48,56 +59,7 @@ class Player {
 			}
 		});
     }
-
-	leave() {
-		this.parent.players.delete(this.user.id);
-		this.parent.parent.events.playerLeave.fire(this, this.parent);
-	}
 }
-
-
-// Function Maker
-class PlayerFunctionMaker {
-    constructor(name, func) {
-        var stuff = (func instanceof Function) ? func : function() { return func; }
-
-        Object.defineProperty(stuff, "name", { value: name });
-        Object.defineProperty( Player.prototype, name, { value: stuff });
-
-        return stuff;
-    }
-}
-
-
-Object.defineProperties(Player, {
-    "Function": { value: PlayerFunctionMaker }, "function": { value: PlayerFunctionMaker },
-    "Func": { value: PlayerFunctionMaker }, "func": { value: PlayerFunctionMaker}
-});
-
-
-
-// Property Maker
-class PlayerPropertyMaker {
-    constructor(name, value, attributes={set:undefined, enumerable:false, configurable:false}) {
-        var func = (value instanceof Function) ? value : function() { return value; };
-        
-        Object.defineProperty(func, "name", { value: name });
-        Object.defineProperty(Player.prototype, name, {
-            get: func,
-            set: attributes.set,
-            enumerable: attributes.enumerable,
-            configurable: attributes.configurable
-        });
-
-        return func;
-    }
-}
-
-
-Object.defineProperties(Player, {
-    "Property": { value: PlayerPropertyMaker }, "property": { value: PlayerPropertyMaker },
-    "Prop": { value: PlayerPropertyMaker }, "prop": { value: PlayerPropertyMaker }
-});
 
 
 module.exports = Player
