@@ -8,7 +8,7 @@ const ID = require('./ID.js');
 
 
 class Lobby {
-    constructor(parent, ctx=null, settings={ starterPlayerValues:{}, values:{}, idLength:4 }) {
+    constructor(parent, ctx=null, settings={ starterPlayerValues:{}, values:{}, idLength:4, id:null }) {
 		this.__proto__ = parent.Lobby.prototype;
 
 		
@@ -21,7 +21,7 @@ class Lobby {
         this.parent = parent
         this.players = new Soup(Object);
 		this.starterPlayerValues = Soup.from(settings.starterPlayerValues);
-		this.id = new ID(settings.idLength)();
+		this.id = (settings.id) ? settings.id : new ID(settings.idLength)();
 		this.values = new Soup(settings.values);
 		this.ctx = ctx;
 		this.home = null;
