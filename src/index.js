@@ -8,12 +8,17 @@ const fs = require('fs');
 
 
 class Pangine {
-    constructor(name) {
+    constructor(name, settings={ starterLobbyValues:{} }) {
 		this.__proto__ = wc.pangine.Pangine.prototype;
 
+		if (!settings.starterLobbyValues) settings.starterLobbyValues = {};
+		this.starterLobbyValues = Soup.from(settings.starterLobbyValues);
+		
+		
 		this.name = name;
 		this.parent = wc
 
+		
 		var config = new Soup({
 			"data": require('./data'),
         	"classes": require('./classes'),
@@ -67,6 +72,9 @@ class Pangine {
 			createLobbyValue: new Event(),
 			updateLobbyValue: new Event(),
 
+			createStarterLobbyValue: new Event(),
+			updateStarterLobbyValue: new Event(),
+
 			createSignal: new Event(),
 			throwSignal: new Event(),
 			catchSignal: new Event(),
@@ -107,6 +115,26 @@ class Pangine {
 			}
 		});
 		Object.defineProperty(this.Event, "name", { value: "Event" });
+
+
+		this.StarterLobbyValue = PangineClassBuilder(new Proxy( class StarterPlayerValue {
+            constructor(name, content) {
+                self.starterlobbyValues.push(name, content)
+
+				self.lobbies.forEach( (k, v) => {
+					if (!v.values.has(name)) v.push(name, content);
+				});
+				
+                parent.events.createStarterLobbyValue.fire(self.starterLobbyValues[name], self);
+                
+                return self.starterLobbyValues[name];
+        	}
+		}, {
+			set(target, prop, value) {
+				target[prop] = value;
+				parent.events.updateStarterLobbyValue.fire(prop, target, self);
+			}
+		}));
 
 
 		if (!wc.pangine.Instances) wc.pangine.Instances = new Soup(Object);
