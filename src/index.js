@@ -1,6 +1,7 @@
 var { wc, bot } = require('../../../index.js');
 
 
+const PangineClassBuilder = require('./builders/PangineClassBuilder.js');
 const { Soup, Stew, Noodle } = require('stews');
 const fs = require('fs');
 
@@ -8,13 +9,14 @@ const fs = require('fs');
 
 class Pangine {
     constructor(name) {
+		this.__proto__ = wc.pangine.Pangine.prototype;
 
 		this.name = name;
 		this.parent = wc
 
 		var config = new Soup({
 			"data": require('./data'),
-        	"classes": require('./classes')
+        	"classes": require('./classes'),
 		});
 
 		
@@ -75,12 +77,14 @@ class Pangine {
 
         
 		var self = this;
+
 		
-		this.Lobby = new Proxy( class Lobby {
+		this.Lobby = PangineClassBuilder(new Proxy( class {
             constructor() {
 				let lobby = new Lobby(self, ...Array.from(arguments));
 				self.storage.lobbies.push(lobby.id, lobby);
                 self.events.createLobby.fire(lobby);
+				
                 return lobby;
             }
         }, {
@@ -88,15 +92,21 @@ class Pangine {
 				target[prop] = value;
 				self.events.updateLobby.fire(prop, target);
 			}	
-		});
+		}));
 		
-		this.Event = class Event { 
+		Object.defineProperty(this.Lobby, "name", { value: "Lobby" });
+
+		
+		this.Event = PangineClassBuilder(class { 
 			constructor(name) {
 				let event = new Event();
 				self.events.push(name, event);
 				self.events.createEvent.fire(name, event);
+
+				return event;
 			}
-		};
+		});
+		Object.defineProperty(this.Event, "name", { value: "Event" });
 
 
 		if (!wc.pangine.Instances) wc.pangine.Instances = new Soup(Object);
@@ -126,55 +136,12 @@ class Pangine {
         if (!this.events.has(event)) this.events.push(event, new this.storage.classes.Event());
         this.events[event].listen(func)
     }
-
-	event(event, func) { return this.event(event, func); }
+	
+	event(event, func) { return this.on(event, func); }
 	
 }
 
 
-// Function Maker
-class PangineFunctionMaker {
-    constructor(name, func) {
-        var stuff = (func instanceof Function) ? func : function() { return func; }
 
-        Object.defineProperty(stuff, "name", { value: name });
-        Object.defineProperty( Pangine.prototype, name, { value: stuff });
-
-        return stuff;
-    }
-}
-
-
-Object.defineProperties(Pangine, {
-    "Function": { value: PangineFunctionMaker }, "function": { value: PangineFunctionMaker },
-    "Func": { value: PangineFunctionMaker }, "func": { value: PangineFunctionMaker}
-});
-
-
-
-// Property Maker
-class PanginePropertyMaker {
-    constructor(name, value, attributes={set:undefined, enumerable:false, configurable:false}) {
-        var func = (value instanceof Function) ? value : function() { return value; };
-        
-        Object.defineProperty(func, "name", { value: name });
-        Object.defineProperty(Pangine.prototype, name, {
-            get: func,
-            set: attributes.set,
-            enumerable: attributes.enumerable,
-            configurable: attributes.configurable
-        });
-
-        return func;
-    }
-}
-
-
-Object.defineProperties(Pangine, {
-    "Property": { value: PanginePropertyMaker }, "property": { value: PanginePropertyMaker },
-    "Prop": { value: PanginePropertyMaker }, "prop": { value: PanginePropertyMaker }
-});
-
-
-
+Pangine = PangineClassBuilder(Pangine);
 module.exports = { Pangine, Instances: new Soup(Object) }
