@@ -3,12 +3,15 @@ var { ws } = require('../../../../index.js');
 const { Soup } = require('stews');
 const Player = require('./Player.js');
 const CoolError = require('./CoolError.js');
+const PangineClassBuilder = require('../builders/PangineClassBuilder.js');
 const ID = require('./ID.js');
 
 
 class Lobby {
     constructor(parent, ctx=null, settings={ starterPlayerValues:{}, values:{}, idLength:4 }) {
+		this.__proto__ = parent.Lobby.prototype;
 
+		
 		if (!settings.starterPlayerValues) settings.starterPlayerValues = {};
 		if (!settings.values) settings.values = {};
 		if (!settings.idLength) settings.idLength = 4;
@@ -40,8 +43,9 @@ class Lobby {
 			}
 		});
 
+
 		
-        this.Player = new Proxy( class Player {
+        this.Player = PangineClassBuilder(new Proxy( class {
             constructor(user) {
 				if (self.locked) throw new CoolError("Lobby Locked", "Player attempted to join a locked lobby.");
                 
@@ -55,10 +59,12 @@ class Lobby {
 				target[prop] = value;
 				parent.events.updatePlayer.fire(prop, target, self);
 			}
-		});
+		}));
+		
+		Object.defineProperty(this.Player, "name", { value: "Player" });
 
 		
-		this.Value = new Proxy( class Value {
+		this.Value = PangineClassBuilder(new Proxy( class Value {
             constructor(name, content) {
                 self.values.push(name, content)
                 parent.events.createLobbyValue.fire(self.values[name], self);
@@ -70,10 +76,10 @@ class Lobby {
 				target[prop] = value;
 				parent.events.updateLobbyValue.fire(prop, target, self);
 			}
-		});
+		}));
 
 		
-		this.StarterPlayerValue = new Proxy( class PlayerValue {
+		this.StarterPlayerValue = PangineClassBuilder(new Proxy( class StarterPlayerValue {
             constructor(name, content) {
                 self.starterPlayerValues.push(name, content)
 
@@ -90,31 +96,43 @@ class Lobby {
 				target[prop] = value;
 				parent.events.updateStarterPlayerValue.fire(prop, target, self);
 			}
-		});
+		}));
 
 
-		this.Signal = class Signal {
+		this.Signal = PangineClassBuilder(class Signal {
 			constructor(name) {
-				this.name = name
-				parent.events.createSignal.fire(this, lobby);
+				this.name = name;
+				this.parent = self;
+				parent.events.createSignal.fire(this, self);
 			}
 
 			throw() {
 				parent.signals.push(this.name, Array.from(arguments));
-				parent.events.throwSignal.fire(this, lobby);
+				parent.events.throwSignal.fire(this, self);
 			}
 
 			catch() {
 				let content = parent.signals.get(this.name);
-				parent.events.catchSignal.fire(this, content, lobby);
+				parent.events.catchSignal.fire(this, content, self);
 				parent.signals.delete(this.name);
 				return content;
 			}
-		}
+		})
 
 		
 		let host = (ctx.author) ? ctx.author : ctx.user;
 		this.host = new this.Player(host);
+
+		
+		this.__proto__.close = function close() {
+			this.parent.lobbies.delete(this.id);
+		}
+		this.__proto__.lock = function lock() {
+			this.lock = true;
+		}
+		this.__proto__.unlock = function unlock() {
+			this.lock = false;
+		}
 
 		
 		return new Proxy(this, {
@@ -134,66 +152,8 @@ class Lobby {
 			}
 		});
     }
-
-	close() {
-		this.parent.lobbies.delete(this.id);
-	}
-
-	
-	lock() {
-		this.lock = true;
-	}
-
-		
-	unlock() {
-		this.lock = false;
-	}
 	
 }
-
-
-// Function Maker
-class LobbyFunctionMaker {
-    constructor(name, func) {
-        var stuff = (func instanceof Function) ? func : function() { return func; }
-
-        Object.defineProperty(stuff, "name", { value: name });
-        Object.defineProperty( Lobby.prototype, name, { value: stuff });
-
-        return stuff;
-    }
-}
-
-
-Object.defineProperties(Lobby, {
-    "Function": { value: LobbyFunctionMaker }, "function": { value: LobbyFunctionMaker },
-    "Func": { value: LobbyFunctionMaker }, "func": { value: LobbyFunctionMaker}
-});
-
-
-
-// Property Maker
-class LobbyPropertyMaker {
-    constructor(name, value, attributes={set:undefined, enumerable:false, configurable:false}) {
-        var func = (value instanceof Function) ? value : function() { return value; };
-        
-        Object.defineProperty(func, "name", { value: name });
-        Object.defineProperty(Lobby.prototype, name, {
-            get: func,
-            set: attributes.set,
-            enumerable: attributes.enumerable,
-            configurable: attributes.configurable
-        });
-
-        return func;
-    }
-}
-
-
-Object.defineProperties(Lobby, {
-    "Property": { value: LobbyPropertyMaker }, "property": { value: LobbyPropertyMaker },
-    "Prop": { value: LobbyPropertyMaker }, "prop": { value: LobbyPropertyMaker }
-});
 
 
 module.exports = Lobby
