@@ -78,6 +78,11 @@ class Lobby {
 			}
 		}));
 
+
+		this.parent.starterLobbyValues.forEach( (k, v) => {
+			new this.Value(k, v);
+		});
+
 		
 		this.StarterPlayerValue = PangineClassBuilder(new Proxy( class StarterPlayerValue {
             constructor(name, content) {
@@ -154,6 +159,7 @@ class Lobby {
     }
 	
 }
+
 
 
 module.exports = Lobby
