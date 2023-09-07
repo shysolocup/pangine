@@ -36,7 +36,7 @@ new inst.Lobby.Function("refresh", function() {
 		],
 
 		color: wc.colors.blurple,
-		footer: `id: ${lobby.id}`
+		footer: `id: ${this.id}`
 	});
 });
 
