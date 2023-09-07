@@ -1,6 +1,6 @@
 {
     "name": "pangine",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "author": "paigeroid",
     "description": "a Discord.JS multiplayer minigame framework using WillClient and Stews",
     "repository": {
