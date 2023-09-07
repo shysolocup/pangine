@@ -8,7 +8,7 @@
         "url": "https://github.com/paigeroid/pangine.git"
     },
     "bugs": {
-        "url": "https://github.com/nuttmegg/pangine/issues"
+        "url": "https://github.com/paigeroid/pangine/issues"
     },
     "license": {
         "type": "MIT",
@@ -18,7 +18,18 @@
         "discord.js": "latest",
         "@discordjs/voice": "latest",
         "node-fetch": "latest",
+        "willclient": "latest",
         "stews": "latest"
     },
+    "keywords": [
+        "discord.js",
+        "willclient",
+        "discord",
+        "discord-games",
+        "minigames",
+        "framework",
+        "pangine"
+    ],
+    "homepage": "https://github.com/paigeroid/pangine",
     "main": "src/index.js"
 }
