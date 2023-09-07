@@ -66,7 +66,7 @@ let options = [{
 }];
 
 
-wc.slashCommand({ name: "join", desc: "joins a lobby" options: options }, async (ctx, cmd) => {
+wc.slashCommand({ name: "join", desc: "joins a lobby", options: options }, async (ctx, cmd) => {
 	let id = cmd.args[0].value;
 
 	if (!inst.lobbies.has(id)) return wc.reply("There is no lobby with that ID", { ephemeral: true });
@@ -96,7 +96,7 @@ let options = [{
 }];
 
 
-wc.slashCommand({ name: "leave", desc: "leaves a lobby" options: options }, async (ctx, cmd) => {
+wc.slashCommand({ name: "leave", desc: "leaves a lobby", options: options }, async (ctx, cmd) => {
 	let id = cmd.args[0].value;
 
 	if (!inst.lobbies.has(id)) return wc.reply("There is no lobby with that ID", { ephemeral: true });
