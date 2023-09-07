@@ -216,7 +216,7 @@ var { wc } = require('path to index.js');
 var { inst } = wc.pangine.Instances;
 
 inst.on("throwSignal", (signal) => {
-	let [ctx, id] = signal.catch(); // catches the signal
+	let [ctx, lobby] = signal.catch(); // catches the signal
 
 	ctx.reply(`I caught lobby ${lobby.id}!`); // responds
 });
