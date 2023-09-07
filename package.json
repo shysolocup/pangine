@@ -17,7 +17,6 @@
     "dependencies": {
         "discord.js": "latest",
         "@discordjs/voice": "latest",
-        "willclient": "latest",
         "node-fetch": "latest",
         "stews": "latest"
     },
