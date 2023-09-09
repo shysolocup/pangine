@@ -131,12 +131,15 @@ class Lobby {
 		
 		this.__proto__.close = function close() {
 			this.parent.lobbies.delete(this.id);
+			this.parent.events.closeLobby.fire(this);
 		}
 		this.__proto__.lock = function lock() {
 			this.lock = true;
+			this.parent.events.lockLobby.fire(this);
 		}
 		this.__proto__.unlock = function unlock() {
 			this.lock = false;
+			this.parent.events.unlockLobby.fire(this);
 		}
 
 		
