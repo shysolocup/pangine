@@ -146,17 +146,23 @@ class Pangine {
 
 	
 	close(lobbyID) {
+		let lobby = this.lobbies.get(lobbyID);
 		this.lobbies.delete(lobbyID);
+		this.events.closeLobby.fire(lobby);
 	}
 
 	
 	lock(lobbyID) {
+		let lobby = this.lobbies.get(lobbyID);
 		this.lobbies[lobbyID].lock = true;
+		this.events.lockLobby.fire(lobby);
 	}
 
 	
 	unlock(lobbyID) {
+		let lobby = this.lobbies.get(lobbyID);
 		this.lobbies[lobbyID].lock = false;
+		this.events.unlockLobby.fire(lobby);
 	}
 
 
