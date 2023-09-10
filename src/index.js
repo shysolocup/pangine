@@ -50,6 +50,12 @@ class Pangine {
 			get() { return this.storage.lobbies; }
 		});
 
+		Object.defineProperty(this, "homeIds", {
+			get() { return this.storage.lobbies.values.map( (lobby) => {
+				return lobby.home.id;
+			})}
+		});
+
 		
         this.events = new Soup({
 
@@ -163,6 +169,21 @@ class Pangine {
 		let lobby = this.lobbies.get(lobbyID);
 		this.lobbies[lobbyID].lock = false;
 		this.events.unlockLobby.fire(lobby);
+	}
+
+
+	findHome(home) {
+		let id;
+		let the;
+		
+		if (typeof home == "string") id = home;
+		else id = home.id;
+
+		this.lobbies.forEach( (_, lobby) => {
+			if (lobby.home.id == id) the = lobby;
+		});
+	
+		return the;
 	}
 
 
