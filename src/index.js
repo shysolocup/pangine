@@ -66,6 +66,7 @@ class Pangine {
 			unlockLobby: new Event(),
 			
 			lobbyTimeout: new Event(),
+			setTimeout: new Event(),
 			resetTimeout: new Event(),
 			clearTimeout: new Event(),
 
