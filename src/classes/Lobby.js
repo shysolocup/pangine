@@ -1,4 +1,4 @@
-var { ws } = require('../../../../index.js');
+var { wc } = require('../../../../index.js');
 
 const { Soup } = require('stews');
 const Player = require('./Player.js');
@@ -16,7 +16,7 @@ class Lobby {
 		if (!settings.values) settings.values = {};
 		if (!settings.players) settings.players = [];
 		if (!settings.idLength) settings.idLength = 4;
-        if (!ctx) ctx = ws.ctx;
+        if (!ctx) ctx = wc.ctx;
 
 		
         this.parent = parent
@@ -140,40 +140,48 @@ class Lobby {
 			this.parent.lobbies.delete(this.id);
 			this.parent.events.closeLobby.fire(this);
 		}
+
 		this.__proto__.lock = function lock() {
 			this.lock = true;
 			this.parent.events.lockLobby.fire(this);
 		}
+
 		this.__proto__.unlock = function unlock() {
 			this.lock = false;
 			this.parent.events.unlockLobby.fire(this);
 		}
-		this.__proto__.resetTimeout = function resetTimeout() {
+
+		this.__proto__.resetTimeout = function resetLobbyTimeout(time=null) {
 			clearTimeout(this.timeout);
+			let action = TimeoutAction.bind(this);
+			time = (time) ? time : this.timeoutTime;
 			
-			this.timeout = setTimeout( () => {
-				
-				this.close();
-				this.parent.events.lobbyTimeout.fire(this, this.timeout);
-				
-			}, wc.time.parse(settings.timeout)*1000 );
+			this.timeout = setTimeout( action, wc.time.parse(time)*1000 );
 			
 			this.parent.events.resetTimeout.fire(this, this.timeout);
 		}
-		this.__proto__.clearTimeout = function clearTimeout() {
+
+		this.__proto__.clearTimeout = function clearLobbyTimeout() {
 			clearTimeout(this.timeout);
 
 			this.parent.events.clearTimeout.fire(this);
 		}
 
+		this.__proto__.setTimeout = function setLobbyTimeout(time) {
+			let action = TimeoutAction.bind(this);
+			time = (time) ? time : (this.timeoutTime) ? this.timeoutTime : 0;
+
+			this.timeoutTime = time;
+			this.timeout = setTimeout( action, wc.time.parse(time)*1000 );
+			
+			this.parent.events.setTimeout.fire(this, this.timeout);
+		}
+
 
 		if (settings.timeout) {
-			this.timeout = setTimeout( () => {
-				
-				this.close();
-				this.parent.events.lobbyTimeout.fire(this, this.timeout);
-				
-			}, wc.time.parse(settings.timeout)*1000 );
+			let action = TimeoutAction.bind(this);
+			this.timeoutTime = settings.timeout;
+			this.timeout = setTimeout( action, wc.time.parse(settings.timeout)*1000 );
 		}
 
 		
@@ -197,6 +205,12 @@ class Lobby {
 	
 }
 
+
+function TimeoutAction() {
+	this.close();
+	this.parent.events.lobbyTimeout.fire(this, this.timeout);
+	clearTimeout(this.timeout);
+}
 
 
 module.exports = Lobby
