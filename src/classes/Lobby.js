@@ -14,6 +14,7 @@ class Lobby {
 		
 		if (!settings.starterPlayerValues) settings.starterPlayerValues = {};
 		if (!settings.values) settings.values = {};
+		if (!settings.players) settings.players = [];
 		if (!settings.idLength) settings.idLength = 4;
         if (!ctx) ctx = ws.ctx;
 
@@ -127,6 +128,11 @@ class Lobby {
 		
 		let host = (ctx.author) ? ctx.author : ctx.user;
 		this.host = new this.Player(host);
+
+
+		settings.players.forEach( (user) => {
+			new this.Player(user);
+		});
 
 		
 		this.__proto__.close = function close() {
