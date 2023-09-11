@@ -8,7 +8,7 @@ const ID = require('./ID.js');
 
 
 class Lobby {
-    constructor(parent, ctx=null, settings={ starterPlayerValues:{}, values:{}, players: [], idLength:4, id:null }) {
+    constructor(parent, ctx=null, settings={ starterPlayerValues:{}, values:{}, players: [], idLength:4, id:null, timeout:false }) {
 		this.__proto__ = parent.Lobby.prototype;
 
 		
@@ -26,6 +26,7 @@ class Lobby {
 		this.values = new Soup(settings.values);
 		this.ctx = ctx;
 		this.home = null;
+		this.timeout = null;
 
 		
         var self = this;
@@ -146,6 +147,16 @@ class Lobby {
 		this.__proto__.unlock = function unlock() {
 			this.lock = false;
 			this.parent.events.unlockLobby.fire(this);
+		}
+
+
+		if (settings.timeout) {
+			this.timeout = setTimeout( () => {
+				
+				this.close();
+				this.parent.events.lobbyTimeout.fire(this, timeout);
+				
+			}, wc.time.parse(settings.timeout)*1000 );
 		}
 
 		
