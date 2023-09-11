@@ -160,10 +160,10 @@ class Pangine {
     }
 
 	
-	close(lobbyID) {
+	close(lobbyID, reason=null) {
 		let lobby = this.lobbies.get(lobbyID);
 		this.lobbies.delete(lobbyID);
-		this.events.closeLobby.fire(lobby);
+		this.events.closeLobby.fire(lobby, reason);
 	}
 
 	
