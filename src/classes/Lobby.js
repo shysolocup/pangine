@@ -8,7 +8,7 @@ const ID = require('./ID.js');
 
 
 class Lobby {
-    constructor(parent, ctx=null, settings={ starterPlayerValues:{}, values:{}, idLength:4, id:null }) {
+    constructor(parent, ctx=null, settings={ starterPlayerValues:{}, values:{}, players: [], idLength:4, id:null }) {
 		this.__proto__ = parent.Lobby.prototype;
 
 		
