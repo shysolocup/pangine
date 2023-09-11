@@ -8,7 +8,7 @@ const ID = require('./ID.js');
 
 
 class Lobby {
-    constructor(parent, ctx=null, settings={ starterPlayerValues:{}, values:{}, players: [], idLength:4, id:null, timeout:false }) {
+    constructor(parent, ctx=null, settings={ starterPlayerValues:{}, values:{}, players: [], idLength:4, id:null, timeout:false, timeoutClose:true }) {
 		this.__proto__ = parent.Lobby.prototype;
 
 		
@@ -16,6 +16,7 @@ class Lobby {
 		if (!settings.values) settings.values = {};
 		if (!settings.players) settings.players = [];
 		if (!settings.idLength) settings.idLength = 4;
+		if (!settings.timeoutClose && settings.timeoutClose.toString() != "false") settings.timeoutClose = true;
         if (!ctx) ctx = wc.ctx;
 
 		
@@ -23,6 +24,7 @@ class Lobby {
         this.players = new Soup(Object);
 		this.starterPlayerValues = Soup.from(settings.starterPlayerValues);
 		this.id = (settings.id) ? settings.id : new ID(settings.idLength)();
+		this.timeoutClose = settings.timeoutClose;
 		this.values = new Soup(settings.values);
 		this.ctx = ctx;
 		this.home = null;
@@ -184,6 +186,12 @@ class Lobby {
 			this.timeout = setTimeout( action, wc.time.parse(settings.timeout)*1000 );
 		}
 
+		else if (this.parent.defaultTimeout) {
+			let action = TimeoutAction.bind(this);
+			this.timeoutTime = this.parent.defaultTimeout;
+			this.timeout = setTimeout( action, wc.time.parse(this.parent.defaultTimeout)*1000 );
+		}
+
 		
 		return new Proxy(this, {
 			get(target, prop) {
@@ -207,7 +215,7 @@ class Lobby {
 
 
 function TimeoutAction() {
-	this.close();
+	if (this.timeoutClose) this.close();
 	this.parent.events.lobbyTimeout.fire(this, this.timeout);
 	clearTimeout(this.timeout);
 }
