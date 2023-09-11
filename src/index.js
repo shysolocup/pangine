@@ -8,11 +8,12 @@ const fs = require('fs');
 
 
 class Pangine {
-    constructor(name, settings={ starterLobbyValues:{} }) {
+    constructor(name, settings={ starterLobbyValues:{}, defaultTimeout: null }) {
 		this.__proto__ = wc.pangine.Pangine.prototype;
 
 		if (!settings.starterLobbyValues) settings.starterLobbyValues = {};
 		this.starterLobbyValues = Soup.from(settings.starterLobbyValues);
+		this.defaultTimeout = settings.defaultTimeout;
 		
 		
 		this.name = name;
@@ -69,6 +70,9 @@ class Pangine {
 			setTimeout: new Event(),
 			resetTimeout: new Event(),
 			clearTimeout: new Event(),
+
+			setDefaultTimeout: new Event(),
+			clearDefaultTimeout: new Event(),
 
 			playerJoin: new Event(),
 			playerLeave: new Event(),
@@ -189,6 +193,17 @@ class Pangine {
 		});
 	
 		return the;
+	}
+
+
+	setDefaultTimeout(time) {
+		this.defaultTimeout = time;
+		this.events.setDefaultTimeout.fire(this.defaultTimeout);
+	}
+
+	clearDefaultTimeout() {
+		this.defaultTimeout = null;
+		this.events.clearDefaultTimeout.fire();
 	}
 
 
