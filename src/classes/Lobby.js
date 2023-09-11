@@ -148,13 +148,30 @@ class Lobby {
 			this.lock = false;
 			this.parent.events.unlockLobby.fire(this);
 		}
+		this.__proto__.resetTimeout = function resetTimeout() {
+			clearTimeout(this.timeout);
+			
+			this.timeout = setTimeout( () => {
+				
+				this.close();
+				this.parent.events.lobbyTimeout.fire(this, this.timeout);
+				
+			}, wc.time.parse(settings.timeout)*1000 );
+			
+			this.parent.events.resetTimeout.fire(this, this.timeout);
+		}
+		this.__proto__.clearTimeout = function clearTimeout() {
+			clearTimeout(this.timeout);
+
+			this.parent.events.clearTimeout.fire(this);
+		}
 
 
 		if (settings.timeout) {
 			this.timeout = setTimeout( () => {
 				
 				this.close();
-				this.parent.events.lobbyTimeout.fire(this, timeout);
+				this.parent.events.lobbyTimeout.fire(this, this.timeout);
 				
 			}, wc.time.parse(settings.timeout)*1000 );
 		}
