@@ -138,9 +138,9 @@ class Lobby {
 		});
 
 		
-		this.__proto__.close = function close() {
+		this.__proto__.close = function close(reason=null) {
 			this.parent.lobbies.delete(this.id);
-			this.parent.events.closeLobby.fire(this);
+			this.parent.events.closeLobby.fire(this, reason);
 		}
 
 		this.__proto__.lock = function lock() {
@@ -215,7 +215,7 @@ class Lobby {
 
 
 function TimeoutAction() {
-	if (this.timeoutClose) this.close();
+	if (this.timeoutClose) this.close("timeout");
 	this.parent.events.lobbyTimeout.fire(this, this.timeout);
 	clearTimeout(this.timeout);
 }
