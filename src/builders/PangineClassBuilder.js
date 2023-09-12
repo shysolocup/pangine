@@ -30,21 +30,46 @@ function PangineClassBuilder(c) {
 	    }
 	}
 
+
+	// Class Maker
+	class PangineClassMaker {
+	    constructor(name, value) {
+	        var cl = PangineClassBuilder(
+				(value instanceof Function) ? value : class { constructor() { return value; } } 
+			);
+
+	        Object.defineProperty(cl, "name", { value: name });
+	        Object.defineProperty(c.prototype, name, { 
+				get() {
+					cl.prototype.parent = this;
+					return cl;
+				}
+			});
+	
+	        return cl;
+	    }
+	}
+
 	
 	Object.defineProperties(c, {
 	    "Function": { value: PangineFunctionMaker }, "function": { value: PangineFunctionMaker },
 	    "Func": { value: PangineFunctionMaker }, "func": { value: PangineFunctionMaker}
 	});
 
+
 	Object.defineProperties(c, {
 	    "Property": { value: PanginePropertyMaker }, "property": { value: PanginePropertyMaker },
 	    "Prop": { value: PanginePropertyMaker }, "prop": { value: PanginePropertyMaker }
 	});
 
+
+	Object.defineProperties(c, {
+	    "Class": { value: PangineClassMaker }, "class": { value: PangineClassMaker }
+	});
+
 	
 	return c;
 }
-
 
 
 module.exports = PangineClassBuilder;
