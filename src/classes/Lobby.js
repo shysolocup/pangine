@@ -16,7 +16,7 @@ class Lobby {
 		if (!settings.values) settings.values = {};
 		if (!settings.players) settings.players = [];
 		if (!settings.idLength) settings.idLength = 4;
-		if (!settings.timeoutClose && settings.timeoutClose.toString() != "false") settings.timeoutClose = true;
+		if (!settings.timeoutClose || settings.timeoutClose.toString() != "false") settings.timeoutClose = true;
         if (!ctx) ctx = wc.ctx;
 
 		
