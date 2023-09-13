@@ -179,7 +179,7 @@ class Lobby {
 			this.parent.events.setTimeout.fire(this, this.timeout);
 		}
 
-		this.__proto__[Symbol.toPrimitive] = function Prim(hint) {
+		this.__proto__[Symbol.toPrimitive] = function(hint) {
 			if (hint === "string") {
             	return this.id
         	}
