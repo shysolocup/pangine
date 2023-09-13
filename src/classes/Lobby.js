@@ -179,6 +179,12 @@ class Lobby {
 			this.parent.events.setTimeout.fire(this, this.timeout);
 		}
 
+		this.__proto__[Symbol.toPrimative] = function Prim(hint) {
+			if (hint === "string") {
+            	return this.id
+        	}
+		}
+
 
 		if (settings.timeout) {
 			let action = TimeoutAction.bind(this);
