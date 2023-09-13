@@ -195,6 +195,13 @@ class Pangine {
 		return the;
 	}
 
+	
+	this.__proto__[Symbol.toPrimative] = function Prim(hint) {
+		if (hint === "string") {
+			return `PangineInstance:${this.StorageID}`;
+		}
+	}
+
 
 	setDefaultTimeout(time) {
 		this.defaultTimeout = time;
