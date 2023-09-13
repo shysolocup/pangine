@@ -198,7 +198,7 @@ class Pangine {
 	
 	[Symbol.toPrimitive](hint) {
 		if (hint === "string") {
-			return `PangineInstance:${this.StorageID}`;
+			return `${this.name}__${this.id}`;
 		}
 	}
 
