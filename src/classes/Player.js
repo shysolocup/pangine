@@ -41,7 +41,7 @@ class Player {
 			this.parent.parent.events.playerLeave.fire(this, this.parent);
 		}
 
-		this.__proto__[Symbol.toPrimative] = function Prim(hint) {
+		this.__proto__[Symbol.toPrimitive] = function Prim(hint) {
 			if (hint === "string") {
             	return `<@${this.user.id}>`
         	}
