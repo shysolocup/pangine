@@ -196,7 +196,7 @@ class Pangine {
 	}
 
 	
-	this.__proto__[Symbol.toPrimative] = function Prim(hint) {
+	[Symbol.toPrimative](hint) {
 		if (hint === "string") {
 			return `PangineInstance:${this.StorageID}`;
 		}
