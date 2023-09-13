@@ -40,6 +40,12 @@ class Player {
 			this.parent.players.delete(this.user.id);
 			this.parent.parent.events.playerLeave.fire(this, this.parent);
 		}
+
+		this.__proto__[Symbol.toPrimative] = function Prim(hint) {
+			if (hint === "string") {
+            	return `<@${this.user.id}>`
+        	}
+		}
 		
 
         return new Proxy(this, {
