@@ -1,6 +1,6 @@
 {
     "name": "pangine",
-    "version": "1.1.2",
+    "version": "1.2.0",
     "author": "paigeroid",
     "description": "a Discord.JS multiplayer minigame framework using WillClient and Stews",
     "repository": {
@@ -19,7 +19,8 @@
         "@discordjs/voice": "latest",
         "node-fetch": "latest",
         "willclient": "latest",
-        "stews": "latest"
+        "stews": "latest",
+        "aepl": "latest"
     },
     "keywords": [
         "discord.js",
@@ -28,7 +29,9 @@
         "discord-games",
         "minigames",
         "framework",
-        "pangine"
+        "pangine",
+        "aepl",
+        "stews"
     ],
     "homepage": "https://github.com/paigeroid/pangine",
     "main": "src/index.js"
